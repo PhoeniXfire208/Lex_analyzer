@@ -14,6 +14,8 @@ def open_file():
     """Открытие существующего файла"""
     path = askopenfilename(filetypes=[('Text files', '.txt'), ('All files', '*')])
     if path:
+        # Очищаем правое поле при загрузке нового файла
+        right_text_area.delete('1.0', END)
         with open(path, 'r') as file:
             code = file.read()
             left_text_area.delete('1.0', END)
