@@ -44,8 +44,8 @@ def run_lexer():
     code = left_text_area.get('1.0', END).strip()
     print(f"Анализируемый код: {repr(code)}")  # Отладка вывода
     tokens = get_tokens(code)
+    right_text_area.delete('1.0', END)
     for token in tokens:
-        right_text_area.delete('1.0', END)
         right_text_area.insert(END, f"{token}\n")
 
 def copy_text(event=None):
