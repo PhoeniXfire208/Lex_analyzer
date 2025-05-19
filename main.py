@@ -2,6 +2,7 @@
 from tkinter import *
 from tkinter.filedialog import asksaveasfilename, askopenfilename
 from imp_lex import get_tokens  # импортируем функцию get_tokens из imp_lex.py
+import chardet
 
 # Глобальная переменная для хранения пути к файлу
 file_path = ''
@@ -10,16 +11,24 @@ def set_file_path(path):
     global file_path
     file_path = path
 
+
 def open_file():
     """Открытие существующего файла"""
     path = askopenfilename(filetypes=[('Text files', '.txt'), ('All files', '*')])
     if path:
+        # Определяем кодировку файла
+        with open(path, 'rb') as raw_file:
+            detected_encoding = chardet.detect(raw_file.read())['encoding']
+
         # Очищаем правое поле при загрузке нового файла
         right_text_area.delete('1.0', END)
-        with open(path, 'r') as file:
+
+        # Открываем файл с найденной кодировкой
+        with open(path, 'r', encoding=detected_encoding) as file:
             code = file.read()
             left_text_area.delete('1.0', END)
             left_text_area.insert('1.0', code)
+
         set_file_path(path)
 
 def save_as():
