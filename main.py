@@ -1,7 +1,7 @@
 #main.py
 from tkinter import *
 from tkinter.filedialog import asksaveasfilename, askopenfilename
-from imp_lex import get_tokens  # импортируем функцию get_tokens из imp_lex.py
+from imp_lex import get_tokens, get_tokens_symbols  # импортируем функцию get_tokens из imp_lex.py
 import chardet
 
 # Глобальная переменная для хранения пути к файлу
@@ -21,7 +21,7 @@ def open_file():
             detected_encoding = chardet.detect(raw_file.read())['encoding']
 
         # Очищаем правое поле при загрузке нового файла
-        right_text_area.delete('1.0', END)
+        middle_text_area.delete('1.0', END)
 
         # Открываем файл с найденной кодировкой
         with open(path, 'r', encoding=detected_encoding) as file:
@@ -53,6 +53,10 @@ def run_lexer():
     code = left_text_area.get('1.0', END).strip()
     print(f"Анализируемый код: {repr(code)}")  # Отладка вывода
     tokens = get_tokens(code)
+    middle_text_area.delete('1.0', END)
+    for token in tokens:
+        middle_text_area.insert(END, f"{token}\n")
+    tokens = get_tokens_symbols(code)
     right_text_area.delete('1.0', END)
     for token in tokens:
         right_text_area.insert(END, f"{token}\n")
@@ -73,11 +77,14 @@ root = Tk()
 root.title("Текстовый редактор")
 
 # Левое окно редактирования исходного кода
-left_text_area = Text(root, wrap='word', width=50, height=20)
+left_text_area = Text(root, wrap='word', width=50, height=20, bg="lightgrey")
 left_text_area.pack(side=LEFT, fill=BOTH, expand=True)
 
 # Правое окно отображения результатов лексического разбора
-right_text_area = Text(root, wrap='word', width=50, height=20)
+middle_text_area = Text(root, wrap='word', width=50, height=20, bg="lightgrey")
+middle_text_area.pack(side=LEFT, fill=BOTH, expand=True)
+
+right_text_area = Text(root, wrap='word', width=50, height=20, bg="lightgrey")
 right_text_area.pack(side=RIGHT, fill=BOTH, expand=True)
 
 # Привязываем сочетание клавиш Ctrl-C к функции копирования

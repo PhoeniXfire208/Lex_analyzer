@@ -1,3 +1,4 @@
+#imp_lex.py
 from lexer import lex
 
 # Регулярные выражения для токенов (важно соблюдать порядок!)
@@ -51,7 +52,7 @@ token_express = [
     (r'(?i)\bcharacter\b', 'CHAR_TYPE'),
     (r'(?i)\bl_1\b', 'TRUE'),
     (r'(?i)\bl_0\b', 'FALSE'),
-    (r'([a-zA-Z_]+[0-9])', 'VARIABLE'),
+    (r'([a-zA-Z_]+\d*)', 'VARIABLE'),
 
     # Ключевые слова (обрабатываются до идентификаторов)
     (r'(?i)\b(begin|end|if|then|else|while|do|with|repeat|when)\b', 'KEYWORD'),
@@ -78,8 +79,55 @@ token_express = [
     (r'#', 'HASH'),
 
     # Переменные и числа
-    (r'[a-zA-Z_а-яА-ЯёЁ]\w*', 'ERROR'),
-    (r'\d+\.?\d*', 'NUMBER'),
+    (r'(\b\d+[a-zA-Z_а-яА-ЯёЁ]\w*\b)|(^\w+$)', 'ERROR'),
+    (r'(?<![a-zA-Z_])(-?(?:\d+\.\d+|\.\d+|\d+))(?![a-zA-Z0-9_])', 'NUMBER'),
+
+    # Пробелы
+    (r'\s+', None),
+]
+
+token_express_symbols = [
+
+    # Типы данных
+    (r'(?i)\bnumber\b', 'INT_TYPE'),
+    (r'(?i)\breal\b', 'REAL_TYPE'),
+    (r'(?i)\bchar\b', 'CHAR_TYPE'),
+    (r'(?i)\bchara\b', 'CHAR_TYPE'),
+    (r'(?i)\bcharac\b', 'CHAR_TYPE'),
+    (r'(?i)\bcharact\b', 'CHAR_TYPE'),
+    (r'(?i)\bcharacte\b', 'CHAR_TYPE'),
+    (r'(?i)\bcharacter\b', 'CHAR_TYPE'),
+    (r'(?i)\bl_1\b', 'TRUE'),
+    (r'(?i)\bl_0\b', 'FALSE'),
+    (r'([a-zA-Z_]+\d*)', 'VARIABLE'),
+
+    # Ключевые слова (обрабатываются до идентификаторов)
+    (r'(?i)\b(begin|end|if|then|else|while|do|with|repeat|when)\b', 'KEYWORD'),
+
+    # Строки и комментарии
+    (r"'[^']*'", 'STRING'),
+    (r'//.*', None),  # Комментарии одной строки
+
+    # Операторы и разделители
+    (r'<-', 'ASSIGN'),
+    (r'(\+\+)|(--)', 'INCDEC'),
+    (r'[\+\-*/]', 'ARITH_OP'),
+    (r'>=|<=|==|!=|&&|\|\||>|<', 'LOGIC_OP'),
+    (r'[()]', 'PAREN'),
+    (r'\{', 'LBRACE'),
+    (r'\}', 'RBRACE'),
+    (r'\[', 'LBRACKET'),
+    (r'\]', 'RBRACKET'),
+    (r'\$\$', 'BLOCK'),
+    (r';', 'SEMICOLON'),
+    (r':', 'COLON'),
+    (r'\.\.\.', 'ELLIPSIS'),
+    (r'\?', 'QUESTION'),
+    (r'#', 'HASH'),
+
+    # Переменные и числа
+    (r'(\b\d+[a-zA-Z_а-яА-ЯёЁ]\w*\b)|(^\w+$)', 'ERROR'),
+    (r'(?<![a-zA-Z_])(-?(?:\d+\.\d+|\.\d+|\d+))(?![a-zA-Z0-9_])', 'NUMBER'),
 
     # Пробелы
     (r'\s+', None),
@@ -87,3 +135,6 @@ token_express = [
 
 def get_tokens(code):
     return lex(code, token_express)
+
+def get_tokens_symbols(code):
+    return lex(code, token_express_symbols)
